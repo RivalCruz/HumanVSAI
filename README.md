@@ -96,8 +96,7 @@ bele-oop-vanilla/
 └── assets/
     ├── favicon.svg
     └── team/
-        ├── ADD-PHOTOS-HERE.txt
-        └── member-photos...
+        ├── member-photos...
 ```
 
 ### Important files

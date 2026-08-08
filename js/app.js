@@ -5,7 +5,9 @@
   const apiLibrary = window.BeleAPI;
 
   if (!config) {
-    throw new Error("BeleConfig is missing. Load js/config.js before js/app.js.");
+    throw new Error(
+      "BeleConfig is missing. Load js/config.js before js/app.js.",
+    );
   }
   if (!apiLibrary?.ApiClient) {
     throw new Error("BeleAPI is missing. Load js/api.js before js/app.js.");
@@ -22,11 +24,115 @@
 
     static titleCase(value) {
       const text = String(value || "");
-      return text ? text.charAt(0).toUpperCase() + text.slice(1).toLowerCase() : "";
+      return text
+        ? text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()
+        : "";
     }
 
     static levelLabel(value) {
       return value === "easy" ? "Beginner" : DomUtils.titleCase(value);
+    }
+  }
+
+  class FontManager {
+    constructor(fontConfig = {}) {
+      this.settings = fontConfig;
+      this.styleElementId = "bele-custom-font-style";
+    }
+
+    apply() {
+      const fallback =
+        this.settings.fallback ||
+        'ui-rounded, "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif';
+      const bodyFallback =
+        this.settings.bodyFallback ||
+        'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      const sources = Array.isArray(this.settings.sources)
+        ? this.settings.sources.filter((source) => source?.path)
+        : [];
+
+      let primaryStack = fallback;
+
+      if (this.settings.enabled && this.settings.familyName && sources.length) {
+        this.installFontFaces(this.settings.familyName, sources);
+        primaryStack = `"${this.escapeCssString(this.settings.familyName)}", ${fallback}`;
+        document.documentElement.dataset.customFont = "enabled";
+      } else {
+        document.documentElement.dataset.customFont = "default";
+      }
+
+      document.documentElement.style.setProperty(
+        "--font-primary",
+        primaryStack,
+      );
+      document.documentElement.style.setProperty(
+        "--font-body",
+        this.settings.applyToBodyText ? primaryStack : bodyFallback,
+      );
+    }
+
+    installFontFaces(familyName, sources) {
+      document.getElementById(this.styleElementId)?.remove();
+
+      const styleElement = document.createElement("style");
+      styleElement.id = this.styleElementId;
+      const family = this.escapeCssString(familyName);
+      const fontDisplay = this.safeKeyword(this.settings.display, "swap");
+
+      styleElement.textContent = sources
+        .map((source) => {
+          const path = this.escapeCssString(source.path);
+          const format = this.escapeCssString(
+            source.format || this.inferFormat(source.path),
+          );
+          const weight = this.safeFontWeight(source.weight);
+          const fontStyle = this.safeKeyword(source.style, "normal");
+
+          return `@font-face {
+          font-family: "${family}";
+          src: url("${path}") format("${format}");
+          font-weight: ${weight};
+          font-style: ${fontStyle};
+          font-display: ${fontDisplay};
+        }`;
+        })
+        .join("\n");
+
+      document.head.appendChild(styleElement);
+    }
+
+    inferFormat(path) {
+      const extension = String(path)
+        .split("?")[0]
+        .split(".")
+        .pop()
+        .toLowerCase();
+      const formats = {
+        woff2: "woff2",
+        woff: "woff",
+        ttf: "truetype",
+        otf: "opentype",
+      };
+      return formats[extension] || "woff2";
+    }
+
+    safeFontWeight(value) {
+      const weight = String(value || "400").trim();
+      return /^[1-9]00(?:\s+[1-9]00)?$/.test(weight) ? weight : "400";
+    }
+
+    safeKeyword(value, fallback) {
+      const keyword = String(value || fallback)
+        .trim()
+        .toLowerCase();
+      return /^[a-z-]+$/.test(keyword) ? keyword : fallback;
+    }
+
+    escapeCssString(value) {
+      return String(value || "")
+        .replace(/\\/g, "\\\\")
+        .replace(/"/g, '\\"')
+        .replace(/[\r\n]/g, "");
     }
   }
 
@@ -54,17 +160,19 @@
 
   class ExplanationFormatter {
     static short(explanation, keyPoints = [], maxLength = 180) {
-      const fallback = Array.isArray(keyPoints) && keyPoints.length
-        ? String(keyPoints[0]).trim()
-        : "Look closely at the content, source, consistency, and context before deciding.";
+      const fallback =
+        Array.isArray(keyPoints) && keyPoints.length
+          ? String(keyPoints[0]).trim()
+          : "Look closely at the content, source, consistency, and context before deciding.";
 
       const cleanText = String(explanation || "")
         .replace(/\s+/g, " ")
         .trim();
 
-      const text = cleanText && cleanText !== "No explanation was provided for this item."
-        ? cleanText
-        : fallback;
+      const text =
+        cleanText && cleanText !== "No explanation was provided for this item."
+          ? cleanText
+          : fallback;
 
       if (text.length <= maxLength) return text;
 
@@ -101,7 +209,10 @@
       this.update(duration);
 
       this.intervalId = window.setInterval(() => {
-        const seconds = Math.max(0, Math.ceil((this.deadline - Date.now()) / 1000));
+        const seconds = Math.max(
+          0,
+          Math.ceil((this.deadline - Date.now()) / 1000),
+        );
         this.update(seconds);
 
         if (seconds <= 0) {
@@ -129,7 +240,11 @@
       wrapper.className = `media-content media-${question.contentType}${compact ? " compact" : ""}`;
 
       if (!question.content) {
-        this.showError(wrapper, "", "The API did not return a media path for this item.");
+        this.showError(
+          wrapper,
+          "",
+          "The API did not return a media path for this item.",
+        );
         return wrapper;
       }
 
@@ -139,7 +254,8 @@
         wrapper.appendChild(this.createVideo(question, wrapper, compact));
       } else {
         const blockquote = document.createElement("blockquote");
-        blockquote.textContent = question.content || "No text content was returned by the API.";
+        blockquote.textContent =
+          question.content || "No text content was returned by the API.";
         wrapper.appendChild(blockquote);
       }
 
@@ -152,14 +268,18 @@
       image.alt = `Quiz image about ${question.topic}`;
       image.loading = "eager";
       image.decoding = "async";
-      image.addEventListener("error", () => {
-        this.showError(
-          wrapper,
-          question.content,
-          "The image URL could not be displayed.",
-          () => wrapper.replaceWith(this.render(question, compact))
-        );
-      }, { once: true });
+      image.addEventListener(
+        "error",
+        () => {
+          this.showError(
+            wrapper,
+            question.content,
+            "The image URL could not be displayed.",
+            () => wrapper.replaceWith(this.render(question, compact)),
+          );
+        },
+        { once: true },
+      );
       return image;
     }
 
@@ -205,23 +325,26 @@
       const markReady = () => shell.classList.remove("is-loading", "is-slow");
       video.addEventListener("loadedmetadata", markReady, { once: true });
       video.addEventListener("canplay", markReady, { once: true });
-      video.addEventListener("error", () => {
-        const message = video.error?.code === 4
-          ? "This video format or server response is not supported by the browser."
-          : "The video could not be loaded from the API URL.";
+      video.addEventListener(
+        "error",
+        () => {
+          const message =
+            video.error?.code === 4
+              ? "This video format or server response is not supported by the browser."
+              : "The video could not be loaded from the API URL.";
 
-        this.showError(
-          wrapper,
-          question.content,
-          message,
-          () => wrapper.replaceWith(this.render(question, compact))
-        );
-      }, { once: true });
+          this.showError(wrapper, question.content, message, () =>
+            wrapper.replaceWith(this.render(question, compact)),
+          );
+        },
+        { once: true },
+      );
 
       shell.append(video, loading, actions);
 
       window.setTimeout(() => {
-        if (shell.isConnected && video.readyState === 0) shell.classList.add("is-slow");
+        if (shell.isConnected && video.readyState === 0)
+          shell.classList.add("is-slow");
       }, 7000);
 
       video.load();
@@ -231,9 +354,11 @@
     inferVideoMimeType(url) {
       const cleanUrl = String(url).split("?")[0].toLowerCase();
       if (cleanUrl.endsWith(".webm")) return "video/webm";
-      if (cleanUrl.endsWith(".ogg") || cleanUrl.endsWith(".ogv")) return "video/ogg";
+      if (cleanUrl.endsWith(".ogg") || cleanUrl.endsWith(".ogv"))
+        return "video/ogg";
       if (cleanUrl.endsWith(".mov")) return "video/quicktime";
-      if (cleanUrl.endsWith(".mp4") || cleanUrl.endsWith(".m4v")) return "video/mp4";
+      if (cleanUrl.endsWith(".mp4") || cleanUrl.endsWith(".m4v"))
+        return "video/mp4";
       return "";
     }
 
@@ -344,7 +469,10 @@
 
       this.closeMenu();
       window.scrollTo({ top: 0, behavior: "smooth" });
-      window.setTimeout(() => this.elements.appMain.focus({ preventScroll: true }), 50);
+      window.setTimeout(
+        () => this.elements.appMain.focus({ preventScroll: true }),
+        50,
+      );
     }
 
     updatePlayer(playerName) {
@@ -359,7 +487,11 @@
       if (message) this.elements.playerName.focus();
     }
 
-    setLoading(visible, title = "Loading quiz", message = "Fetching questions from the quiz API…") {
+    setLoading(
+      visible,
+      title = "Loading quiz",
+      message = "Fetching questions from the quiz API…",
+    ) {
       this.elements.loadingOverlay.hidden = !visible;
       this.elements.loadingTitle.textContent = title;
       this.elements.loadingMessage.textContent = message;
@@ -468,15 +600,24 @@
       this.elements.teamGrid.replaceChildren(...cards);
     }
 
-    renderQuestion({ question, currentIndex, total, correctCount, difficulty }) {
+    renderQuestion({
+      question,
+      currentIndex,
+      total,
+      correctCount,
+      difficulty,
+    }) {
       const questionNumber = currentIndex + 1;
       this.elements.difficultyLabel.textContent = `${DomUtils.levelLabel(difficulty)} level`;
       this.elements.questionCounter.textContent = `Question ${questionNumber} of ${total}`;
       this.elements.progressFill.style.width = `${(currentIndex / total) * 100}%`;
       this.elements.correctCount.textContent = String(correctCount);
-      this.elements.contentTypeBadge.textContent = question.contentType.toUpperCase();
+      this.elements.contentTypeBadge.textContent =
+        question.contentType.toUpperCase();
       this.elements.questionTopic.textContent = question.topic;
-      this.elements.contentFrame.replaceChildren(this.mediaRenderer.render(question));
+      this.elements.contentFrame.replaceChildren(
+        this.mediaRenderer.render(question),
+      );
       this.resetAnswerArea(questionNumber === total);
     }
 
@@ -485,11 +626,18 @@
       this.elements.answerFeedback.className = "answer-feedback";
       this.elements.answerFeedback.replaceChildren();
       this.elements.nextQuestionButton.hidden = true;
-      this.elements.nextQuestionButton.textContent = isLastQuestion ? "See my result →" : "Next question →";
+      this.elements.nextQuestionButton.textContent = isLastQuestion
+        ? "See my result →"
+        : "Next question →";
 
       this.answerButtons().forEach((button) => {
         button.disabled = false;
-        button.classList.remove("is-selected", "is-correct", "is-wrong", "is-loading");
+        button.classList.remove(
+          "is-selected",
+          "is-correct",
+          "is-wrong",
+          "is-loading",
+        );
       });
     }
 
@@ -513,12 +661,20 @@
       selectedButton.classList.remove("is-loading");
     }
 
-    showAnswerResult(result, selectedButton, shortExplanation, progressPercentage, correctCount) {
+    showAnswerResult(
+      result,
+      selectedButton,
+      shortExplanation,
+      progressPercentage,
+      correctCount,
+    ) {
       selectedButton.classList.remove("is-loading");
       selectedButton.classList.add(result.correct ? "is-correct" : "is-wrong");
 
       if (!result.correct) {
-        const correctButton = this.answerButtons().find((button) => button.dataset.guess === result.answer);
+        const correctButton = this.answerButtons().find(
+          (button) => button.dataset.guess === result.answer,
+        );
         correctButton?.classList.add("is-correct");
       }
 
@@ -543,7 +699,9 @@
     }
 
     showTimeoutPending(isLastQuestion, progressPercentage) {
-      this.answerButtons().forEach((button) => { button.disabled = true; });
+      this.answerButtons().forEach((button) => {
+        button.disabled = true;
+      });
       this.elements.answerFeedback.className = "answer-feedback timeout";
       this.elements.answerFeedback.replaceChildren();
 
@@ -551,12 +709,15 @@
       title.textContent = "Time’s up!";
       const explanation = document.createElement("p");
       explanation.className = "feedback-explanation";
-      explanation.textContent = "This question is unanswered. The correct answer and a short explanation are loading.";
+      explanation.textContent =
+        "This question is unanswered. The correct answer and a short explanation are loading.";
 
       this.elements.answerFeedback.append(title, explanation);
       this.elements.answerFeedback.hidden = false;
       this.elements.nextQuestionButton.hidden = false;
-      this.elements.nextQuestionButton.textContent = isLastQuestion ? "See my result →" : "Next question →";
+      this.elements.nextQuestionButton.textContent = isLastQuestion
+        ? "See my result →"
+        : "Next question →";
       this.elements.progressFill.style.width = `${progressPercentage}%`;
       this.elements.nextQuestionButton.focus();
     }
@@ -577,16 +738,28 @@
     updateTimer(seconds, difficulty) {
       const limit = this.config.TIMER[difficulty] || this.config.TIMER.easy;
       const ratio = seconds / limit;
-      const timerState = ratio <= 0.2 ? "danger" : ratio <= 0.4 ? "warning" : "normal";
+      const timerState =
+        ratio <= 0.2 ? "danger" : ratio <= 0.4 ? "warning" : "normal";
 
       this.elements.timerValue.textContent = String(seconds);
       this.elements.questionTimer.dataset.state = timerState;
-      this.elements.questionTimer.setAttribute("aria-label", `${seconds} seconds remaining`);
+      this.elements.questionTimer.setAttribute(
+        "aria-label",
+        `${seconds} seconds remaining`,
+      );
     }
 
-    renderResult({ playerName, percentage, correct, total, difficulty, timedOut }) {
+    renderResult({
+      playerName,
+      percentage,
+      correct,
+      total,
+      difficulty,
+      timedOut,
+    }) {
       let title = "Keep investigating!";
-      let message = "Every mistake is useful evidence. Review the explanations and try another round.";
+      let message =
+        "Every mistake is useful evidence. Review the explanations and try another round.";
       let medal = "bronze";
 
       if (percentage >= this.config.QUIZ.goldPercentage) {
@@ -599,15 +772,17 @@
         medal = "silver";
       }
 
-      this.elements.resultEyebrow.textContent = percentage >= this.config.QUIZ.passPercentage
-        ? "Congratulations — you passed!"
-        : "Round complete";
+      this.elements.resultEyebrow.textContent =
+        percentage >= this.config.QUIZ.passPercentage
+          ? "Congratulations — you passed!"
+          : "Round complete";
       this.elements.resultTitle.textContent = title;
       this.elements.resultMessage.textContent = message;
       this.elements.scorePercent.textContent = `${percentage}%`;
       this.elements.resultCorrect.textContent = String(correct);
       this.elements.resultTotal.textContent = String(total);
-      this.elements.resultDifficulty.textContent = DomUtils.levelLabel(difficulty);
+      this.elements.resultDifficulty.textContent =
+        DomUtils.levelLabel(difficulty);
       this.elements.resultTimedOut.textContent = String(timedOut);
       this.elements.medalWrap.className = `medal-wrap ${medal}`;
     }
@@ -644,7 +819,10 @@
 
     showReviewDetail(answer, index) {
       DomUtils.all(".review-item", this.elements.reviewList).forEach((item) => {
-        item.classList.toggle("is-active", Number(item.dataset.reviewIndex) === index);
+        item.classList.toggle(
+          "is-active",
+          Number(item.dataset.reviewIndex) === index,
+        );
       });
 
       const preview = document.createElement("div");
@@ -652,7 +830,9 @@
 
       const mediaContainer = document.createElement("div");
       mediaContainer.className = "review-media";
-      mediaContainer.appendChild(this.mediaRenderer.render(answer.question, true));
+      mediaContainer.appendChild(
+        this.mediaRenderer.render(answer.question, true),
+      );
 
       const copy = document.createElement("div");
       copy.className = "review-copy";
@@ -660,12 +840,17 @@
       const answerRow = document.createElement("div");
       answerRow.className = "review-answer-row";
       answerRow.append(
-        this.createAnswerPill("Your answer", answer.timedOut ? "No answer (time expired)" : answer.guess),
-        this.createAnswerPill("Correct answer", answer.answer)
+        this.createAnswerPill(
+          "Your answer",
+          answer.timedOut ? "No answer (time expired)" : answer.guess,
+        ),
+        this.createAnswerPill("Correct answer", answer.answer),
       );
 
       const heading = document.createElement("h2");
-      heading.textContent = answer.correct ? "Why this answer is correct" : "Useful clues to consider";
+      heading.textContent = answer.correct
+        ? "Why this answer is correct"
+        : "Useful clues to consider";
 
       const explanation = document.createElement("p");
       explanation.textContent = answer.explanation;
@@ -699,7 +884,9 @@
       reminderLabel.textContent = "Media literacy reminder: ";
       reminder.append(
         reminderLabel,
-        document.createTextNode("Treat these clues as prompts for further verification, not as a guaranteed AI detector.")
+        document.createTextNode(
+          "Treat these clues as prompts for further verification, not as a guaranteed AI detector.",
+        ),
       );
       copy.appendChild(reminder);
 
@@ -735,7 +922,7 @@
 
       this.timer = new CountdownTimer(
         (seconds) => this.ui.updateTimer(seconds, this.state.difficulty),
-        () => this.handleTimeExpired()
+        () => this.handleTimeExpired(),
       );
     }
 
@@ -776,11 +963,14 @@
       this.ui.setLoading(
         true,
         `Preparing ${DomUtils.levelLabel(difficulty)} mode`,
-        `Fetching ${this.config.QUIZ.questionCount} random items from the API…`
+        `Fetching ${this.config.QUIZ.questionCount} random items from the API…`,
       );
 
       try {
-        this.state.questions = await this.api.loadQuiz(difficulty, this.config.QUIZ.questionCount);
+        this.state.questions = await this.api.loadQuiz(
+          difficulty,
+          this.config.QUIZ.questionCount,
+        );
         this.ui.setApiStatus("online", "API online");
         this.showScreen("quiz");
         this.renderCurrentQuestion();
@@ -808,11 +998,17 @@
         difficulty: this.state.difficulty,
       });
 
-      this.timer.start(this.config.TIMER[this.state.difficulty] || this.config.TIMER.easy);
+      this.timer.start(
+        this.config.TIMER[this.state.difficulty] || this.config.TIMER.easy,
+      );
     }
 
     async answerCurrentQuestion(guess, selectedButton) {
-      if (this.state.answerPending || this.state.answers[this.state.currentIndex]) return;
+      if (
+        this.state.answerPending ||
+        this.state.answers[this.state.currentIndex]
+      )
+        return;
 
       const question = this.currentQuestion;
       const answerIndex = this.state.currentIndex;
@@ -828,7 +1024,7 @@
         const shortExplanation = ExplanationFormatter.short(
           result.explanation,
           result.keyPoints,
-          this.config.QUIZ.shortExplanationMaxLength
+          this.config.QUIZ.shortExplanationMaxLength,
         );
 
         this.ui.showAnswerResult(
@@ -836,7 +1032,7 @@
           selectedButton,
           shortExplanation,
           ((answerIndex + 1) / this.state.questions.length) * 100,
-          this.correctCount
+          this.correctCount,
         );
       } catch (error) {
         this.ui.restoreAnswerButtons(selectedButton);
@@ -849,7 +1045,11 @@
     }
 
     handleTimeExpired() {
-      if (this.state.answerPending || this.state.answers[this.state.currentIndex]) return;
+      if (
+        this.state.answerPending ||
+        this.state.answers[this.state.currentIndex]
+      )
+        return;
 
       const expiredIndex = this.state.currentIndex;
       const question = this.state.questions[expiredIndex];
@@ -868,10 +1068,11 @@
 
       this.ui.showTimeoutPending(
         expiredIndex === this.state.questions.length - 1,
-        ((expiredIndex + 1) / this.state.questions.length) * 100
+        ((expiredIndex + 1) / this.state.questions.length) * 100,
       );
 
-      this.api.revealAnswer(question)
+      this.api
+        .revealAnswer(question)
         .then((result) => {
           this.state.answers[expiredIndex] = {
             ...result,
@@ -881,17 +1082,25 @@
             timedOut: true,
           };
 
-          if (this.state.currentIndex === expiredIndex && !this.ui.screens.quiz.hidden) {
+          if (
+            this.state.currentIndex === expiredIndex &&
+            !this.ui.screens.quiz.hidden
+          ) {
             const shortExplanation = ExplanationFormatter.short(
               result.explanation,
               result.keyPoints,
-              this.config.QUIZ.shortExplanationMaxLength
+              this.config.QUIZ.shortExplanationMaxLength,
             );
             this.ui.updateTimeoutResult(result, shortExplanation);
           }
 
-          const activeReview = this.ui.elements.reviewList.querySelector(".review-item.is-active");
-          if (!this.ui.screens.review.hidden && Number(activeReview?.dataset.reviewIndex) === expiredIndex) {
+          const activeReview = this.ui.elements.reviewList.querySelector(
+            ".review-item.is-active",
+          );
+          if (
+            !this.ui.screens.review.hidden &&
+            Number(activeReview?.dataset.reviewIndex) === expiredIndex
+          ) {
             this.showReviewDetail(expiredIndex);
           }
         })
@@ -899,7 +1108,8 @@
           this.state.answers[expiredIndex] = {
             ...this.state.answers[expiredIndex],
             answer: "Unavailable",
-            explanation: "The correct answer and explanation could not be retrieved.",
+            explanation:
+              "The correct answer and explanation could not be retrieved.",
           };
         });
     }
@@ -921,7 +1131,9 @@
       const total = this.state.questions.length || 1;
       const correct = this.correctCount;
       const percentage = Math.round((correct / total) * 100);
-      const timedOut = this.state.answers.filter((answer) => answer?.timedOut).length;
+      const timedOut = this.state.answers.filter(
+        (answer) => answer?.timedOut,
+      ).length;
 
       this.ui.renderResult({
         playerName: this.state.playerName,
@@ -958,7 +1170,9 @@
     }
 
     confirmQuitQuiz() {
-      if (window.confirm("Leave this round? Your current answers will be lost.")) {
+      if (
+        window.confirm("Leave this round? Your current answers will be lost.")
+      ) {
         this.showScreen("level");
       }
     }
@@ -975,14 +1189,18 @@
         !this.state.answerPending;
 
       if (!canAnswer) return;
-      if (event.key.toLowerCase() === "h") DomUtils.one("[data-guess='Human']")?.click();
-      if (event.key.toLowerCase() === "a") DomUtils.one("[data-guess='AI']")?.click();
+      if (event.key.toLowerCase() === "h")
+        DomUtils.one("[data-guess='Human']")?.click();
+      if (event.key.toLowerCase() === "a")
+        DomUtils.one("[data-guess='AI']")?.click();
     }
   }
 
   class BeleApp {
     constructor() {
       this.config = config;
+      this.fontManager = new FontManager(this.config.FONT);
+      this.fontManager.apply();
       this.storage = new StorageService(this.config.APP.storageKey);
       this.api = new apiLibrary.ApiClient(this.config.API);
       this.ui = new BeleUI(this.config);
@@ -1002,22 +1220,40 @@
         this.game.startFromName();
       });
 
-      elements.playerName.addEventListener("input", () => this.ui.showNameError(""));
+      elements.playerName.addEventListener("input", () =>
+        this.ui.showNameError(""),
+      );
 
       DomUtils.all(".level-card").forEach((button) => {
-        button.addEventListener("click", () => this.game.beginQuiz(button.dataset.difficulty));
+        button.addEventListener("click", () =>
+          this.game.beginQuiz(button.dataset.difficulty),
+        );
       });
 
       this.ui.answerButtons().forEach((button) => {
-        button.addEventListener("click", () => this.game.answerCurrentQuestion(button.dataset.guess, button));
+        button.addEventListener("click", () =>
+          this.game.answerCurrentQuestion(button.dataset.guess, button),
+        );
       });
 
-      elements.nextQuestionButton.addEventListener("click", () => this.game.goToNextQuestion());
-      DomUtils.one("#quitQuizButton").addEventListener("click", () => this.game.confirmQuitQuiz());
-      DomUtils.one("#reviewButton").addEventListener("click", () => this.game.renderReview());
-      DomUtils.one("#playAgainButton").addEventListener("click", () => this.game.showScreen("level"));
-      DomUtils.one("#reviewBackButton").addEventListener("click", () => this.game.showScreen("result"));
-      DomUtils.one("#brandButton").addEventListener("click", () => this.game.navigate("home"));
+      elements.nextQuestionButton.addEventListener("click", () =>
+        this.game.goToNextQuestion(),
+      );
+      DomUtils.one("#quitQuizButton").addEventListener("click", () =>
+        this.game.confirmQuitQuiz(),
+      );
+      DomUtils.one("#reviewButton").addEventListener("click", () =>
+        this.game.renderReview(),
+      );
+      DomUtils.one("#playAgainButton").addEventListener("click", () =>
+        this.game.showScreen("level"),
+      );
+      DomUtils.one("#reviewBackButton").addEventListener("click", () =>
+        this.game.showScreen("result"),
+      );
+      DomUtils.one("#brandButton").addEventListener("click", () =>
+        this.game.navigate("home"),
+      );
 
       document.addEventListener("click", (event) => {
         const navButton = event.target.closest("[data-nav]");
@@ -1027,18 +1263,37 @@
         if (modalButton?.dataset.modal === "how") this.ui.openHowToPlayModal();
 
         const reviewButton = event.target.closest("[data-review-index]");
-        if (reviewButton) this.game.showReviewDetail(Number(reviewButton.dataset.reviewIndex));
+        if (reviewButton) {
+          this.game.showReviewDetail(Number(reviewButton.dataset.reviewIndex));
+
+          if (window.matchMedia("(max-width: 1050px)").matches) {
+            window.requestAnimationFrame(() => {
+              this.ui.elements.reviewPreview.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            });
+          }
+        }
       });
 
       elements.menuButton.addEventListener("click", () => this.ui.openMenu());
-      elements.closeMenuButton.addEventListener("click", () => this.ui.closeMenu());
-      elements.menuBackdrop.addEventListener("click", () => this.ui.closeMenu());
-      elements.modalCloseButton.addEventListener("click", () => this.ui.closeModal());
+      elements.closeMenuButton.addEventListener("click", () =>
+        this.ui.closeMenu(),
+      );
+      elements.menuBackdrop.addEventListener("click", () =>
+        this.ui.closeMenu(),
+      );
+      elements.modalCloseButton.addEventListener("click", () =>
+        this.ui.closeModal(),
+      );
       elements.modalBackdrop.addEventListener("click", (event) => {
         if (event.target === elements.modalBackdrop) this.ui.closeModal();
       });
 
-      document.addEventListener("keydown", (event) => this.game.handleKeyboard(event));
+      document.addEventListener("keydown", (event) =>
+        this.game.handleKeyboard(event),
+      );
       window.addEventListener("beforeunload", () => this.game.timer.stop());
     }
 
@@ -1060,6 +1315,7 @@
   // Exposed for learning and debugging. Gameplay starts with BeleApp below.
   window.BeleClasses = Object.freeze({
     ApiClient: apiLibrary.ApiClient,
+    FontManager,
     StorageService,
     ExplanationFormatter,
     CountdownTimer,
@@ -1076,7 +1332,9 @@
   };
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", startApplication, { once: true });
+    document.addEventListener("DOMContentLoaded", startApplication, {
+      once: true,
+    });
   } else {
     startApplication();
   }
