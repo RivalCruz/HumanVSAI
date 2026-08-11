@@ -127,19 +127,20 @@ input:focus-visible {
 }
 .brand {
   gap: 10px;
-  padding: 7px 12px;
+  padding: 5px 10px;
   border-radius: 13px;
   font-weight: 900;
   font-size: 1.1rem;
 }
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: white;
-  color: var(--orange-700);
+.brand-logo {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  flex: 0 0 46px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.96);
+  padding: 2px;
+  box-shadow: 0 5px 14px rgba(71, 34, 17, 0.15);
 }
 .api-indicator {
   display: flex;
@@ -286,37 +287,15 @@ input:focus-visible {
 }
 .lens-art {
   position: relative;
-  height: 230px;
+  height: 260px;
   display: grid;
   place-items: center;
 }
-.lens-ring {
-  width: 180px;
-  height: 180px;
-  border: 19px solid white;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow:
-    inset 0 0 0 7px rgba(255, 255, 255, 0.18),
-    var(--soft-shadow);
-  transform: rotate(-8deg);
-}
-.lens-ring span {
-  font-size: 2.4rem;
-  font-weight: 900;
-}
-.lens-handle {
-  width: 26px;
-  height: 115px;
-  border-radius: 999px;
-  background: white;
-  position: absolute;
-  transform: rotate(-43deg);
-  bottom: -6px;
-  right: 22%;
-  box-shadow: var(--soft-shadow);
+.site-logo-art img {
+  width: min(300px, 100%);
+  max-height: 260px;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 24px rgba(97, 44, 15, 0.22));
 }
 .card {
   background: white;
@@ -1511,17 +1490,11 @@ input:focus {
   background: rgba(255, 255, 255, 0.13);
   text-align: center;
 }
-.about-emblem span {
-  width: 104px;
-  height: 104px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: white;
-  color: var(--orange-700);
-  font-size: 4rem;
-  font-weight: 900;
-  box-shadow: var(--soft-shadow);
+.about-emblem img {
+  width: min(190px, 78%);
+  max-height: 155px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 18px rgba(75, 31, 11, 0.2));
 }
 .about-emblem small {
   margin-top: 15px;
@@ -1817,7 +1790,7 @@ input:focus {
   font: 0.9rem/1.55 var(--font-body);
 }
 
-/* ===== Bele v6: responsive explanation review page ===== */
+/* ===== is it AI? v7: responsive explanation review page ===== */
 .review-screen {
   overflow-x: clip;
   padding: clamp(18px, 4vw, 60px);
