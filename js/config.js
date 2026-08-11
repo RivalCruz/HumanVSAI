@@ -20,9 +20,9 @@
       skills: ["JavaScript", "Game Logic", "Scoring System"],
     },
     {
-      name: "Gregorious",
+      name: "Gregorious Carlos Salvador Latuloho da Conceição",
       role: "Media & Asset Specialist",
-      photo: "",
+      photo: "assets/team/Gregorious.jpeg",
       initials: "Gregorious",
       contribution:
         "Collects, edits, optimizes, and prepares images, videos, and other media content used in the game.",
