@@ -14,7 +14,7 @@
       name: "Carol",
       role: "Gameplay Logic Developer",
       photo: "",
-      initials: "M2",
+      initials: "Carol",
       contribution:
         "Develops the core game mechanics such as question flow, answer checking, scoring, difficulty levels, timers, and result calculation.",
       skills: ["JavaScript", "Game Logic", "Scoring System"],
@@ -23,7 +23,7 @@
       name: "Gregorious",
       role: "Media & Asset Specialist",
       photo: "",
-      initials: "M3",
+      initials: "Gregorious",
       contribution:
         "Collects, edits, optimizes, and prepares images, videos, and other media content used in the game.",
       skills: ["Asset Collection", "Image Editing", "Video Editing"],
@@ -32,7 +32,7 @@
       name: "Melania",
       role: "UI/UX Designer",
       photo: "",
-      initials: "M5",
+      initials: "Melania",
       contribution:
         "Creates the interface, user journey, wireframes, visual design, responsiveness concepts, and overall user experience.",
       skills: ["UI Design", "UX Design", "Adobe Illustrator"],
