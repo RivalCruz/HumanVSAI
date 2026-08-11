@@ -31,7 +31,7 @@
     {
       name: "Melania",
       role: "UI/UX Designer",
-      photo: "",
+      photo: "assets/team/Melania.jpeg",
       initials: "Melania",
       contribution:
         "Creates the interface, user journey, wireframes, visual design, responsiveness concepts, and overall user experience.",
@@ -40,7 +40,7 @@
     {
       name: "Livio",
       role: "Frontend Interaction Developer",
-      photo: "",
+      photo: "assets/team/Livio.jpeg",
       initials: "Livio",
       contribution:
         "Develops user interactions, navigation, responsive behavior, media display, feedback components, and overall frontend game experience.",
