@@ -551,49 +551,128 @@
       this.elements.modalContent.innerHTML = "";
     }
 
+    // renderTeamMembers(members) {
+    //   const cards = members.map((member) => {
+    //     const card = document.createElement("article");
+    //     card.className = "team-card";
+
+    //     const memberHeader = document.createElement("div");
+    //     memberHeader.className = "member-header";
+
+    //     if (member.photo) {
+    //       const photo = document.createElement("img");
+    //       photo.className = "member-photo";
+    //       photo.src = member.photo;
+    //       photo.alt = `Portrait of ${member.name}`;
+    //       card.appendChild(photo);
+    //     } else {
+    //       const avatar = document.createElement("div");
+    //       avatar.className = "member-avatar";
+    //       avatar.setAttribute("aria-hidden", "true");
+    //       avatar.textContent = member.initials;
+    //       card.appendChild(avatar);
+    //     }
+
+    //     const copy = document.createElement("div");
+    //     copy.className = "member-copy";
+
+    //     const role = document.createElement("p");
+    //     role.className = "member-role";
+    //     role.textContent = member.role;
+
+    //     const name = document.createElement("h3");
+    //     name.textContent = member.name;
+
+    //     const contribution = document.createElement("p");
+    //     contribution.textContent = member.contribution;
+
+    //     const skills = document.createElement("div");
+    //     skills.className = "member-skills";
+    //     skills.setAttribute("aria-label", "Skills");
+    //     member.skills.forEach((skill) => {
+    //       const tag = document.createElement("span");
+    //       tag.textContent = skill;
+    //       skills.appendChild(tag);
+    //     });
+
+    //     copy.append(role, name, contribution, skills);
+    //     card.appendChild(copy);
+    //     return card;
+    //   });
+
+    //   this.elements.teamGrid.replaceChildren(...cards);
+    // }
+
     renderTeamMembers(members) {
       const cards = members.map((member) => {
         const card = document.createElement("article");
         card.className = "team-card";
 
+        // =========================
+        // HEADER: Photo + Name + Role
+        // =========================
+        const memberHeader = document.createElement("div");
+        memberHeader.className = "member-header";
+
+        // Photo or fallback avatar
         if (member.photo) {
           const photo = document.createElement("img");
           photo.className = "member-photo";
           photo.src = member.photo;
           photo.alt = `Portrait of ${member.name}`;
-          card.appendChild(photo);
+
+          memberHeader.appendChild(photo);
         } else {
           const avatar = document.createElement("div");
           avatar.className = "member-avatar";
           avatar.setAttribute("aria-hidden", "true");
-          avatar.textContent = member.initials;
-          card.appendChild(avatar);
+          avatar.textContent = member.initials || member.name.charAt(0);
+
+          memberHeader.appendChild(avatar);
         }
 
-        const copy = document.createElement("div");
-        copy.className = "member-copy";
+        // Name + Role beside the photo
+        const identity = document.createElement("div");
+        identity.className = "member-identity";
+
+        const name = document.createElement("h3");
+        name.className = "member-name";
+        name.textContent = member.name;
 
         const role = document.createElement("p");
         role.className = "member-role";
         role.textContent = member.role;
 
-        const name = document.createElement("h3");
-        name.textContent = member.name;
+        identity.append(name, role);
+        memberHeader.appendChild(identity);
 
+        // =========================
+        // CONTRIBUTION
+        // =========================
         const contribution = document.createElement("p");
+        contribution.className = "member-contribution";
         contribution.textContent = member.contribution;
 
+        // =========================
+        // SKILLS
+        // =========================
         const skills = document.createElement("div");
         skills.className = "member-skills";
-        skills.setAttribute("aria-label", "Skills");
+        skills.setAttribute("aria-label", `${member.name}'s skills`);
+
         member.skills.forEach((skill) => {
           const tag = document.createElement("span");
+          tag.className = "skill-tag";
           tag.textContent = skill;
+
           skills.appendChild(tag);
         });
 
-        copy.append(role, name, contribution, skills);
-        card.appendChild(copy);
+        // =========================
+        // BUILD CARD
+        // =========================
+        card.append(memberHeader, contribution, skills);
+
         return card;
       });
 

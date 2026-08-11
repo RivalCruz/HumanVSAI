@@ -11,49 +11,49 @@
 
   const TEAM_MEMBERS = [
     {
-      name: "Member 1",
-      role: "Project Lead & Research",
-      photo: "assets/logo3.png",
-      initials: "M1",
-      contribution:
-        "Coordinates the project, media-literacy research, planning, and final presentation.",
-      skills: ["Leadership", "Research", "Presentation"],
-    },
-    {
-      name: "Member 2",
-      role: "UI/UX Designer",
+      name: "Carol",
+      role: "Gameplay Logic Developer",
       photo: "",
       initials: "M2",
       contribution:
-        "Creates the visual identity, user flow, responsive layouts, and accessibility decisions.",
-      skills: ["Adobe Illustrator", "Wireframing", "UX"],
+        "Develops the core game mechanics such as question flow, answer checking, scoring, difficulty levels, timers, and result calculation.",
+      skills: ["JavaScript", "Game Logic", "Scoring System"],
     },
     {
-      name: "Member 3",
-      role: "Frontend Developer",
+      name: "Gregorious",
+      role: "Media & Asset Specialist",
       photo: "",
       initials: "M3",
       contribution:
-        "Builds the responsive interface, quiz interactions, timer, and browser behaviour.",
-      skills: ["HTML", "CSS", "JavaScript"],
+        "Collects, edits, optimizes, and prepares images, videos, and other media content used in the game.",
+      skills: ["Asset Collection", "Image Editing", "Video Editing"],
     },
     {
-      name: "Member 4",
-      role: "Backend & API Developer",
-      photo: "",
-      initials: "M4",
-      contribution:
-        "Develops the quiz API, answer routes, deployment, and media delivery.",
-      skills: ["Python", "FastAPI", "Vercel"],
-    },
-    {
-      name: "Member 5",
-      role: "Content & Quality Assurance",
+      name: "Melania",
+      role: "UI/UX Designer",
       photo: "",
       initials: "M5",
       contribution:
-        "Prepares content, checks explanations and sources, and tests the complete game.",
-      skills: ["Data curation", "Verification", "Testing"],
+        "Creates the interface, user journey, wireframes, visual design, responsiveness concepts, and overall user experience.",
+      skills: ["UI Design", "UX Design", "Adobe Illustrator"],
+    },
+    {
+      name: "Livio",
+      role: "Frontend Interaction Developer",
+      photo: "",
+      initials: "Livio",
+      contribution:
+        "Develops user interactions, navigation, responsive behavior, media display, feedback components, and overall frontend game experience.",
+      skills: ["JavaScript", "Responsive Design", "UI Interaction"],
+    },
+    {
+      name: "Rivaldo",
+      role: "Team Lead & API Developer",
+      photo: "assets/team/Rivaldo.jpeg",
+      initials: "Rivaldo",
+      contribution:
+        "Leads the project, coordinates the team, develops the API, and manages communication between the dataset and website.",
+      skills: ["Leadership", "Python", "FastAPI"],
     },
   ];
 
