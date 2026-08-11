@@ -1,1 +1,0 @@
-Place optional team profile photos in this folder, then update the photo paths in js/app.js.
