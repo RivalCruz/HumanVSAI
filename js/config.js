@@ -53,7 +53,7 @@
       initials: "Rivaldo",
       contribution:
         "Leads the project, coordinates the team, develops the API, and manages communication between the dataset and website.",
-      skills: ["Leadership", "Python", "FastAPI"],
+      skills: ["Python", "FastAPI", "Backend Integration"],
     },
   ];
 
