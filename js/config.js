@@ -29,7 +29,7 @@
       skills: ["Asset Collection", "Image Editing", "Video Editing"],
     },
     {
-      name: "Melania",
+      name: "Melania Da Silva Pires",
       role: "UI/UX Designer",
       photo: "assets/team/Melania.jpeg",
       initials: "Melania",
@@ -38,7 +38,7 @@
       skills: ["UI Design", "UX Design", "Adobe Illustrator"],
     },
     {
-      name: "Livio",
+      name: "Lívio Jomi Familia Monteiro Alves",
       role: "Frontend Interaction Developer",
       photo: "assets/team/Livio.jpeg",
       initials: "Livio",
@@ -47,7 +47,7 @@
       skills: ["JavaScript", "Responsive Design", "UI Interaction"],
     },
     {
-      name: "Rivaldo",
+      name: "Rivaldo Graciano Ramos Da Cruz",
       role: "Team Lead & API Developer",
       photo: "assets/team/Rivaldo.jpeg",
       initials: "Rivaldo",
