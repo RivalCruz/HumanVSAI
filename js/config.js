@@ -13,8 +13,8 @@
     {
       name: "Carol",
       role: "Gameplay Logic Developer",
-      photo: "",
-      initials: "Carol",
+      photo: "assets/team/Carol.jpeg",
+      initials: "Carrol Estevao Lay",
       contribution:
         "Develops the core game mechanics such as question flow, answer checking, scoring, difficulty levels, timers, and result calculation.",
       skills: ["JavaScript", "Game Logic", "Scoring System"],
