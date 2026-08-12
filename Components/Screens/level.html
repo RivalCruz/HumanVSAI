@@ -1,0 +1,42 @@
+<section
+  class="screen level-screen"
+  id="levelScreen"
+  data-screen="level"
+  aria-labelledby="levelTitle"
+  hidden
+>
+  <div class="centered-panel">
+    <p class="eyebrow light">
+      Welcome, <span id="levelPlayerName">Player</span>
+    </p>
+    <h1 id="levelTitle">Choose your level</h1>
+    <p class="level-intro">
+      Each round contains six random items from the live quiz collection. Text,
+      images, and videos may appear in any order.
+    </p>
+
+    <div class="level-grid" aria-label="Difficulty levels">
+      <button class="level-card easy" type="button" data-difficulty="easy">
+        <span class="level-icon" aria-hidden="true">●</span>
+        <span class="level-name">Beginner</span>
+        <span class="level-detail">Clearer clues and common patterns</span>
+        <span class="level-time">60 seconds per question</span>
+      </button>
+      <button class="level-card medium" type="button" data-difficulty="medium">
+        <span class="level-icon" aria-hidden="true">◆</span>
+        <span class="level-name">Medium</span>
+        <span class="level-detail">More realistic and subtle signals</span>
+        <span class="level-time">40 seconds per question</span>
+      </button>
+      <button class="level-card hard" type="button" data-difficulty="hard">
+        <span class="level-icon" aria-hidden="true">▲</span>
+        <span class="level-name">Hard</span>
+        <span class="level-detail">Ambiguous evidence and close calls</span>
+        <span class="level-time">25 seconds per question</span>
+      </button>
+    </div>
+    <button class="text-button light-text" type="button" data-nav="home">
+      ← Change player name
+    </button>
+  </div>
+</section>

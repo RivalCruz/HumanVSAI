@@ -1,0 +1,89 @@
+<section
+  class="screen quiz-screen"
+  id="quizScreen"
+  data-screen="quiz"
+  aria-labelledby="questionHeading"
+  hidden
+>
+  <div class="quiz-layout">
+    <div class="quiz-topline">
+      <button
+        class="back-button"
+        id="quitQuizButton"
+        type="button"
+        aria-label="Leave quiz"
+      >
+        ←
+      </button>
+      <div class="progress-copy">
+        <span id="difficultyLabel">Easy</span>
+        <strong id="questionCounter">Question 1 of 6</strong>
+      </div>
+      <div class="quiz-status-cluster">
+        <div class="score-mini" aria-live="polite">
+          <span id="correctCount">0</span> correct
+        </div>
+        <div
+          class="question-timer"
+          id="questionTimer"
+          data-state="normal"
+          role="timer"
+          aria-live="polite"
+          aria-label="Time remaining"
+        >
+          <span class="timer-icon" aria-hidden="true">◷</span>
+          <span class="timer-copy"
+            ><small>Time left</small
+            ><strong><span id="timerValue">60</span>s</strong></span
+          >
+        </div>
+      </div>
+    </div>
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <article class="question-card" id="questionCard">
+      <div class="question-meta">
+        <span class="content-badge" id="contentTypeBadge">IMAGE</span>
+        <span id="questionTopic">Topic</span>
+      </div>
+      <h1 id="questionHeading">Human or AI?</h1>
+      <p class="question-prompt">
+        Study the content carefully, then choose who you think created it.
+      </p>
+
+      <div class="content-frame" id="contentFrame" aria-live="polite"></div>
+
+      <div class="answer-area">
+        <p class="answer-label">What do you think?</p>
+        <div class="answer-buttons" id="answerButtons">
+          <button class="answer-button human" type="button" data-guess="Human">
+            <span class="answer-symbol" aria-hidden="true">◉</span>
+            <span
+              ><strong>Human</strong><small>Created by a person</small></span
+            >
+          </button>
+          <button class="answer-button ai" type="button" data-guess="AI">
+            <span class="answer-symbol" aria-hidden="true">✦</span>
+            <span><strong>AI</strong><small>Generated with AI</small></span>
+          </button>
+        </div>
+        <div
+          class="answer-feedback"
+          id="answerFeedback"
+          hidden
+          aria-live="polite"
+        ></div>
+        <button
+          class="primary-button next-button"
+          id="nextQuestionButton"
+          type="button"
+          hidden
+        >
+          Next question →
+        </button>
+      </div>
+    </article>
+  </div>
+</section>

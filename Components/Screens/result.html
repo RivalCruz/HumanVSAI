@@ -1,0 +1,38 @@
+<section
+  class="screen result-screen"
+  id="resultScreen"
+  data-screen="result"
+  aria-labelledby="resultTitle"
+  hidden
+>
+  <div class="result-card card">
+    <p class="eyebrow" id="resultEyebrow">Round complete</p>
+    <h1 id="resultTitle">Great effort!</h1>
+    <p class="result-message" id="resultMessage"></p>
+
+    <div class="medal-wrap" id="medalWrap" aria-label="Quiz score">
+      <div class="medal-rays" aria-hidden="true"></div>
+      <div class="medal-disc"><span id="scorePercent">0%</span></div>
+      <div class="ribbon ribbon-left" aria-hidden="true"></div>
+      <div class="ribbon ribbon-right" aria-hidden="true"></div>
+    </div>
+
+    <div class="result-stats" aria-label="Result summary">
+      <div><span>Correct</span><strong id="resultCorrect">0</strong></div>
+      <div><span>Total</span><strong id="resultTotal">6</strong></div>
+      <div>
+        <span>Level</span><strong id="resultDifficulty">Beginner</strong>
+      </div>
+      <div><span>Timed out</span><strong id="resultTimedOut">0</strong></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="primary-button" id="reviewButton" type="button">
+        Read explanations
+      </button>
+      <button class="secondary-button" id="playAgainButton" type="button">
+        Play again
+      </button>
+    </div>
+  </div>
+</section>
