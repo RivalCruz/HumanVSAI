@@ -11,10 +11,10 @@
 
   const TEAM_MEMBERS = [
     {
-      name: "Carol",
+      name: "Carrol Estevao Lay",
       role: "Gameplay Logic Developer",
       photo: "assets/team/Carol.jpeg",
-      initials: "Carrol Estevao Lay",
+      initials: "Carrol",
       contribution:
         "Develops the core game mechanics such as question flow, answer checking, scoring, difficulty levels, timers, and result calculation.",
       skills: ["JavaScript", "Game Logic", "Scoring System"],
